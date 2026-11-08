@@ -24,6 +24,8 @@ except Exception:
 
 DEFAULT_HOST = "0.0.0.0"
 DEFAULT_PORT = 8000
+with open("index.html", "r", encoding="utf-8") as f:
+    HTML = f.read()
 
 
 class StreamHandler(SimpleHTTPRequestHandler):
@@ -38,59 +40,7 @@ class StreamHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         path = urlparse(self.path).path
         if path == "/" or path == "/index.html":
-            html = """<html><head><meta charset='UTF-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>ScreenX - Live Stream</title>
-<style>
-:root { 
-    --bg: #0f172a; 
-    --card-bg: #1e293b; 
-    --border: #334155; 
-    --text: #f8fafc; 
-    --btn-hover: #475569;
-}
-[data-theme="light"] { 
-    --bg: #f1f5f9; 
-    --card-bg: #ffffff; 
-    --border: #cbd5e1; 
-    --text: #0f172a; 
-    --btn-hover: #e2e8f0;
-}
-html, body { height: 100vh; margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; transition: background 0.2s, color 0.2s; }
-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; border-bottom: 1px solid var(--border); background: var(--card-bg); flex-shrink: 0; transition: background 0.2s, border-color 0.2s; }
-h2 { margin: 0; font-size: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.theme-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: background 0.2s; }
-.theme-btn:hover { background: var(--btn-hover); }
-.stream-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 16px; overflow: hidden; background: var(--bg); }
-.stream-container { position: relative; max-width: 100%; max-height: 100%; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.15); }
-.stream-container img { display: block; max-width: 100%; max-height: calc(100vh - 100px); width: auto; height: auto; object-fit: contain; }
-</style>
-<script>
-function setTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('screenx_theme', theme);
-    document.getElementById('themeToggle').innerText = theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode';
-}
-function toggleTheme() {
-    const current = localStorage.getItem('screenx_theme') || 'dark';
-    setTheme(current === 'dark' ? 'light' : 'dark');
-}
-window.addEventListener('DOMContentLoaded', () => {
-    const saved = localStorage.getItem('screenx_theme') || 'dark';
-    setTheme(saved);
-});
-</script>
-</head><body>
-<header>
-  <h2>⚡ ScreenX</h2>
-  <button id='themeToggle' class='theme-btn' onclick='toggleTheme()'>☀️ Light Mode</button>
-</header>
-<div class='stream-wrapper'>
-  <div class='stream-container'>
-    <img src='/stream' alt='Live desktop stream'>
-  </div>
-</div>
-</body></html>"""
+            html = HTML
             body = html.encode('utf-8')
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
