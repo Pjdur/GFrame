@@ -3,39 +3,44 @@
 <title>ScreenX - Live Stream</title>
 <style>
 :root { 
-    --bg: #0f172a; 
-    --card-bg: #1e293b; 
-    --border: #334155; 
-    --text: #f8fafc; 
-    --btn-hover: #475569;
-    --online: #22c55e;
+    --bg: #090d16; 
+    --card-bg: #111827; 
+    --border: #1f2937; 
+    --text: #f3f4f6; 
+    --text-muted: #9ca3af;
+    --btn-bg: #1f2937;
+    --btn-hover: #374151;
+    --online: #10b981;
     --offline: #ef4444;
 }
 [data-theme="light"] { 
-    --bg: #f1f5f9; 
+    --bg: #f8fafc; 
     --card-bg: #ffffff; 
-    --border: #cbd5e1; 
+    --border: #e2e8f0; 
     --text: #0f172a; 
+    --text-muted: #64748b;
+    --btn-bg: #f1f5f9;
     --btn-hover: #e2e8f0;
 }
 html, body { height: 100vh; margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; transition: background 0.2s, color 0.2s; }
-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; border-bottom: 1px solid var(--border); background: var(--card-bg); flex-shrink: 0; transition: background 0.2s, border-color 0.2s; }
-h2 { margin: 0; font-size: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
-.header-right { display: flex; align-items: center; gap: 12px; }
-.status-badge { display: flex; align-items: center; gap: 6px; font-size: 0.8125rem; font-weight: 500; background: var(--bg); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border); }
-.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--offline); transition: background 0.3s; }
-.status-dot.live { background: var(--online); box-shadow: 0 0 8px rgba(34, 197, 94, 0.4); }
-.action-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: background 0.2s; }
-.action-btn:hover { background: var(--btn-hover); }
-.stream-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 16px; overflow: hidden; background: var(--bg); }
-.stream-container { position: relative; max-width: 100%; max-height: 100%; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.15); }
-.stream-container img { display: block; max-width: 100%; max-height: calc(100vh - 100px); width: auto; height: auto; object-fit: contain; cursor: pointer; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--card-bg); flex-shrink: 0; transition: background 0.2s, border-color 0.2s; }
+h2 { margin: 0; font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; color: var(--text); }
+h2 span { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); background: var(--btn-bg); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.status-badge { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 500; font-family: ui-monospace, monospace; background: var(--btn-bg); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); color: var(--text-muted); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--offline); transition: background 0.3s; }
+.status-dot.live { background: var(--online); box-shadow: 0 0 6px rgba(16, 185, 129, 0.5); }
+.action-btn { background: var(--btn-bg); border: 1px solid var(--border); color: var(--text); padding: 5px 10px; border-radius: 6px; font-weight: 500; font-size: 0.8125rem; cursor: pointer; transition: all 0.15s ease; display: flex; align-items: center; gap: 6px; }
+.action-btn:hover { background: var(--btn-hover); border-color: var(--text-muted); }
+.stream-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 12px; overflow: hidden; background: var(--bg); }
+.stream-container { position: relative; max-width: 100%; max-height: 100%; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #000; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3), 0 8px 10px -6px rgba(0,0,0,0.3); }
+.stream-container img { display: block; max-width: 100%; max-height: calc(100vh - 80px); width: auto; height: auto; object-fit: contain; cursor: pointer; }
 </style>
 <script>
 function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('screenx_theme', theme);
-    document.getElementById('themeToggle').innerText = theme === 'light' ? '🌙' : '☀️';
+    document.getElementById('themeToggleText').innerText = theme === 'light' ? 'Dark' : 'Light';
 }
 function toggleTheme() {
     const current = localStorage.getItem('screenx_theme') || 'dark';
@@ -59,14 +64,13 @@ window.addEventListener('DOMContentLoaded', () => {
     const dot = document.getElementById('statusDot');
     const statusText = document.getElementById('statusText');
 
-    // Auto-reconnect and live status monitoring for the MJPEG stream
     function updateStatus(isLive) {
         if (isLive) {
             dot.classList.add('live');
-            statusText.innerText = 'Live';
+            statusText.innerText = 'LIVE';
         } else {
             dot.classList.remove('live');
-            statusText.innerText = 'Reconnecting...';
+            statusText.innerText = 'RECONNECTING';
         }
     }
 
@@ -74,32 +78,26 @@ window.addEventListener('DOMContentLoaded', () => {
     img.onerror = () => {
         updateStatus(false);
         setTimeout(() => {
-            // Force reload the stream source with a timestamp to bust cache
             img.src = '/stream?t=' + Date.now();
         }, 2000);
     };
-
-    // Heartbeat check: if the image hasn't loaded frames or stalled, trigger error handling
-    let lastNaturalWidth = 0;
-    setInterval(() => {
-        if (img.naturalWidth > 0 && img.naturalWidth === lastNaturalWidth) {
-            // Stream might have frozen, bump it
-            // Optional safety net, but onload/onerror usually handles drops
-        }
-        lastNaturalWidth = img.naturalWidth;
-    }, 3000);
 });
 </script>
 </head><body>
 <header>
-  <h2>⚡ ScreenX</h2>
+  <h2>ScreenX <span>MJPEG</span></h2>
   <div class="header-right">
     <div class="status-badge">
       <div id="statusDot" class="status-dot"></div>
-      <span id="statusText">Connecting</span>
+      <span id="statusText">CONNECTING</span>
     </div>
-    <button class='action-btn' onclick='toggleFullscreen()' title='Toggle Fullscreen'>🖵 Fullscreen</button>
-    <button id='themeToggle' class='action-btn' onclick='toggleTheme()'></button>
+    <button class='action-btn' onclick='toggleFullscreen()'>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+      Fullscreen
+    </button>
+    <button id='themeToggle' class='action-btn' onclick='toggleTheme()'>
+      <span id='themeToggleText'>Light</span>
+    </button>
   </div>
 </header>
 <div class='stream-wrapper'>
