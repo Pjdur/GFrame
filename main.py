@@ -40,6 +40,9 @@ class StreamHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         path = urlparse(self.path).path
         if path == "/" or path == "/index.html":
+            client_ip = self.client_address[0]
+            print(f"[ScreenX] Screen requested by {client_ip}", flush=True)
+
             html = HTML
             body = html.encode('utf-8')
             self.send_response(200)
@@ -52,6 +55,9 @@ class StreamHandler(SimpleHTTPRequestHandler):
             self.wfile.write(body)
 
         elif path == "/stream":
+            client_ip = self.client_address[0]
+            print(f"[ScreenX] Stream connected: viewer joined from {client_ip}", flush=True)
+            
             self.send_response(200)
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
             self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
