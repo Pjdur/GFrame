@@ -56,19 +56,25 @@ class StreamHandler(SimpleHTTPRequestHandler):
 
         elif path == "/stream":
             client_ip = self.client_address[0]
-            print(f"[ScreenX] Stream connected: viewer joined from {client_ip}", flush=True)
+            print(f"[ScreenX] Screen requested by {client_ip}", flush=True)
             
             self.send_response(200)
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
             self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
             self.end_headers()
             try:
-                # mss sessions are not thread-safe, so each viewer gets its own capture session.
+                # Grab the monitor index chosen via CLI (default to 1 if missing)
+                monitor_idx = getattr(self.server, 'monitor_index', 1)
+                
                 with mss.MSS() as sct:
-                    monitor = sct.monitors[1]  # First physical display; monitors[0] spans all displays
+                    # Safely bound check in case an invalid monitor index was passed
+                    if monitor_idx >= len(sct.monitors):
+                        print(f"ScreenX: Monitor index {monitor_idx} not found. Falling back to 1.", file=sys.stderr)
+                        monitor_idx = 1
+                        
+                    monitor = sct.monitors[monitor_idx]
                     while True:
                         sct_img = sct.grab(monitor)
-                        # Efficiently convert mss raw BGRA bytes into a PIL Image
                         img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
 
                         buf = io.BytesIO()
@@ -81,9 +87,9 @@ class StreamHandler(SimpleHTTPRequestHandler):
                         self.wfile.write(frame)
                         self.wfile.write(b'\r\n')
                         self.wfile.flush()
-                        time.sleep(0.015)  # Faster frame pacing enabled by mss speed
+                        time.sleep(0.015)
             except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError):
-                pass  # viewer closed the tab or the network dropped
+                pass
             except Exception as exc:
                 print(f"ScreenX: stream error: {exc!r}", file=sys.stderr)
 
@@ -139,15 +145,17 @@ def print_urls(host, port):
         print(f"ScreenX streaming at: http://{host}:{port}", flush=True)
 
 
-def start_server(host, port):
+def start_server(host, port, monitor_index):
     try:
         server = ThreadedHTTPServer((host, port), StreamHandler)
+        server.monitor_index = monitor_index  # Make monitor index accessible to handlers
     except OSError as exc:
         print(f"ScreenX: cannot listen on {host}:{port} ({exc}).", file=sys.stderr, flush=True)
         print("Is ScreenX already running? Try a different port, e.g. --port 8001.", file=sys.stderr, flush=True)
         return 1
 
     print_urls(host, port)
+    print(f"Streaming monitor index: {monitor_index}", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
@@ -155,7 +163,6 @@ def start_server(host, port):
     finally:
         server.server_close()
     return 0
-
 
 def main(argv=None):
     parser = argparse.ArgumentParser(
@@ -173,8 +180,14 @@ def main(argv=None):
         default=DEFAULT_PORT,
         help=f"port to listen on (default: {DEFAULT_PORT})",
     )
+    parser.add_argument(
+        "--monitor",
+        type=int,
+        default=1,
+        help="monitor index to stream (default: 1 for primary screen, 0 for all screens combined)",
+    )
     args = parser.parse_args(argv)
-    return start_server(args.host, args.port)
+    return start_server(args.host, args.port, args.monitor)
 
 
 if __name__ == "__main__":
