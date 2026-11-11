@@ -8,7 +8,7 @@ uv run main.py
 
 ```text
 GFrame streaming at: http://localhost:8000
-                  or: http://192.168.1.42:8000
+                 or: http://192.168.1.42:8000
 Viewers on your network need the second URL. The stream has no authentication.
 ```
 

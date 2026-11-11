@@ -139,7 +139,7 @@ def print_urls(host, port):
     if host in ("", "0.0.0.0", "::"):
         print(f"GFrame streaming at: http://localhost:{port}", flush=True)
         for addr in _lan_addresses():
-            print(f"                  or: http://{addr}:{port}", flush=True)
+            print(f"                 or: http://{addr}:{port}", flush=True)
         print("Viewers on your network need the second URL. The stream has no authentication.", flush=True)
     else:
         print(f"GFrame streaming at: http://{host}:{port}", flush=True)
