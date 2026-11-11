@@ -1,4 +1,4 @@
-# ScreenX
+# GFrame
 
 Stream your desktop to any browser on your local network. Live, no plugins, no build step, one Python file.
 
@@ -7,7 +7,7 @@ uv run main.py
 ```
 
 ```text
-ScreenX streaming at: http://localhost:8000
+GFrame streaming at: http://localhost:8000
                   or: http://192.168.1.42:8000
 Viewers on your network need the second URL. The stream has no authentication.
 ```
@@ -68,22 +68,22 @@ Because every viewer captures and encodes independently, CPU scales linearly wit
 
 ## Security
 
-**ScreenX has no authentication.** Anything that can reach the port can watch your screen. That is fine on a trusted home network and a problem anywhere else.
+**GFrame has no authentication.** Anything that can reach the port can watch your screen. That is fine on a trusted home network and a problem anywhere else.
 
-- Do not port-forward ScreenX to the internet.
+- Do not port-forward GFrame to the internet.
 - For access from outside the house, put it behind a VPN or tunnel (Tailscale, WireGuard, Cloudflare Tunnel) rather than exposing the port.
 - Bind `--host 127.0.0.1` if you only want to view from the same machine.
 
-ScreenX is deliberately **view-only**. Remote cursor or keyboard control is not implemented; see the roadmap for a safe design if that ever changes.
+GFrame is deliberately **view-only**. Remote cursor or keyboard control is not implemented; see the roadmap for a safe design if that ever changes.
 
 ## Troubleshooting
 
 | Symptom | Cause | Fix |
 | --- | --- | --- |
 | Page loads, stream stays black | Exclusive-fullscreen game or protected content - GDI `BitBlt` cannot capture it | Run the game in borderless windowed mode |
-| Stream dies with `ScreenX: stream error: ...` | Real capture/encode failure, now reported on stderr | Read the message; it is no longer silently swallowed |
-| Phone cannot connect | `localhost` is the phone itself, or the device is on a guest VLAN | Use the LAN URL that ScreenX prints, and allow the Windows Firewall prompt |
-| Cannot start, port error | Another ScreenX (or anything else) is on the port | `--port 8001` |
+| Stream dies with `GFrame: stream error: ...` | Real capture/encode failure, now reported on stderr | Read the message; it is no longer silently swallowed |
+| Phone cannot connect | `localhost` is the phone itself, or the device is on a guest VLAN | Use the LAN URL that GFrame prints, and allow the Windows Firewall prompt |
+| Cannot start, port error | Another GFrame (or anything else) is on the port | `--port 8001` |
 | Mouse pointer missing or flickering | mss's `with_cursor` option is Linux-only; on Windows the pointer only appears as a side effect of `CAPTUREBLT` | Known limitation |
 
 ## Roadmap

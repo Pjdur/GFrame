@@ -1,4 +1,4 @@
-"""ScreenX - stream this computer's screen to any browser on the network as MJPEG."""
+"""GFrame - stream this computer's screen to any browser on the network as MJPEG."""
 
 import argparse
 import ctypes
@@ -29,7 +29,7 @@ with open("index.html", "r", encoding="utf-8") as f:
 
 
 class StreamHandler(SimpleHTTPRequestHandler):
-    """Serves the live MJPEG ScreenX desktop/game stream using mss for high-speed capture."""
+    """Serves the live MJPEG GFrame desktop/game stream using mss for high-speed capture."""
 
     def log_error(self, format, *args):
         # Suppress harmless connection abort/broken pipe errors caused by client disconnects
@@ -41,7 +41,7 @@ class StreamHandler(SimpleHTTPRequestHandler):
         path = urlparse(self.path).path
         if path == "/" or path == "/index.html":
             client_ip = self.client_address[0]
-            print(f"[ScreenX] Screen requested by {client_ip}", flush=True)
+            print(f"[GFrame] Screen requested by {client_ip}", flush=True)
 
             html = HTML
             body = html.encode('utf-8')
@@ -56,7 +56,7 @@ class StreamHandler(SimpleHTTPRequestHandler):
 
         elif path == "/stream":
             client_ip = self.client_address[0]
-            print(f"[ScreenX] Screen requested by {client_ip}", flush=True)
+            print(f"[GFrame] Screen requested by {client_ip}", flush=True)
             
             self.send_response(200)
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
@@ -69,7 +69,7 @@ class StreamHandler(SimpleHTTPRequestHandler):
                 with mss.MSS() as sct:
                     # Safely bound check in case an invalid monitor index was passed
                     if monitor_idx >= len(sct.monitors):
-                        print(f"ScreenX: Monitor index {monitor_idx} not found. Falling back to 1.", file=sys.stderr)
+                        print(f"GFrame: Monitor index {monitor_idx} not found. Falling back to 1.", file=sys.stderr)
                         monitor_idx = 1
                         
                     monitor = sct.monitors[monitor_idx]
@@ -91,7 +91,7 @@ class StreamHandler(SimpleHTTPRequestHandler):
             except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError):
                 pass
             except Exception as exc:
-                print(f"ScreenX: stream error: {exc!r}", file=sys.stderr)
+                print(f"GFrame: stream error: {exc!r}", file=sys.stderr)
 
         elif path == "/favicon.ico":
             self.send_response(204)
@@ -137,12 +137,12 @@ def _lan_addresses():
 
 def print_urls(host, port):
     if host in ("", "0.0.0.0", "::"):
-        print(f"ScreenX streaming at: http://localhost:{port}", flush=True)
+        print(f"GFrame streaming at: http://localhost:{port}", flush=True)
         for addr in _lan_addresses():
             print(f"                  or: http://{addr}:{port}", flush=True)
         print("Viewers on your network need the second URL. The stream has no authentication.", flush=True)
     else:
-        print(f"ScreenX streaming at: http://{host}:{port}", flush=True)
+        print(f"GFrame streaming at: http://{host}:{port}", flush=True)
 
 
 def start_server(host, port, monitor_index):
@@ -150,8 +150,8 @@ def start_server(host, port, monitor_index):
         server = ThreadedHTTPServer((host, port), StreamHandler)
         server.monitor_index = monitor_index  # Make monitor index accessible to handlers
     except OSError as exc:
-        print(f"ScreenX: cannot listen on {host}:{port} ({exc}).", file=sys.stderr, flush=True)
-        print("Is ScreenX already running? Try a different port, e.g. --port 8001.", file=sys.stderr, flush=True)
+        print(f"GFrame: cannot listen on {host}:{port} ({exc}).", file=sys.stderr, flush=True)
+        print("Is GFrame already running? Try a different port, e.g. --port 8001.", file=sys.stderr, flush=True)
         return 1
 
     print_urls(host, port)
@@ -159,14 +159,14 @@ def start_server(host, port, monitor_index):
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print("\nScreenX stopped.")
+        print("\nGFrame stopped.")
     finally:
         server.server_close()
     return 0
 
 def main(argv=None):
     parser = argparse.ArgumentParser(
-        prog="screenx",
+        prog="GFrame",
         description="Stream this computer's screen to any browser on the network.",
     )
     parser.add_argument(

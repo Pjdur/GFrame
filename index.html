@@ -1,6 +1,6 @@
 <html><head><meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>ScreenX - Live Stream</title>
+<title>GFrame - Live Stream</title>
 <style>
 :root { 
     --bg: #090d16; 
@@ -39,11 +39,11 @@ h2 span { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); backgr
 <script>
 function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('screenx_theme', theme);
+    localStorage.setItem('GFrame_theme', theme);
     document.getElementById('themeToggleText').innerText = theme === 'light' ? 'Dark' : 'Light';
 }
 function toggleTheme() {
-    const current = localStorage.getItem('screenx_theme') || 'dark';
+    const current = localStorage.getItem('GFrame_theme') || 'dark';
     setTheme(current === 'dark' ? 'light' : 'dark');
 }
 
@@ -57,7 +57,7 @@ function toggleFullscreen() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    const saved = localStorage.getItem('screenx_theme') || 'dark';
+    const saved = localStorage.getItem('GFrame_theme') || 'dark';
     setTheme(saved);
 
     const img = document.getElementById('streamImg');
@@ -85,7 +85,7 @@ window.addEventListener('DOMContentLoaded', () => {
 </script>
 </head><body>
 <header>
-  <h2>ScreenX</h2>
+  <h2>GFrame</h2>
   <div class="header-right">
     <div class="status-badge">
       <div id="statusDot" class="status-dot"></div>

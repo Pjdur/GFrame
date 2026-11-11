@@ -1,5 +1,5 @@
 [project]
-name = "screenx"
+name = "GFrame"
 version = "0.1.0"
 description = "Stream a computer's screen to any browser on the network over MJPEG"
 readme = "README.md"
